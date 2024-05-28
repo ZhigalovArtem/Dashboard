@@ -1,6 +1,5 @@
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output
-import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -66,6 +65,10 @@ def update_page_1(region, year):
         'Сумма дохода одного региона за несколько лет',
         'Динамика фонда заработной платы в зависимости от одного региона',
         'Сумма доходов региона и сумма социальных выплат'
+    ], specs=[
+        [{'type': 'xy'}, {'type': 'xy'}],
+        [{'type': 'domain'}, {'type': 'xy'}],
+        [{'type': 'xy'}, {'type': 'xy'}]
     ])
     
     # Численность населения региона в зависимости от фонда зарплаты
@@ -101,6 +104,8 @@ def update_page_2(region, year):
     fig = make_subplots(rows=1, cols=2, subplot_titles=[
         'Тепловая карта с приростом населений',
         'Тепловая карта с привлекательности региона для миграции'
+    ], specs=[
+        [{'type': 'heatmap'}, {'type': 'heatmap'}]
     ])
     
     # Тепловая карта с приростом населений
