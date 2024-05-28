@@ -4,11 +4,7 @@ import plotly.graph_objects as go
 from data import df
 
 # Функции для создания графиков
-def create_population_vs_income_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']))
-    fig.update_layout(title_text='Численность населения региона в зависимости от фонда зарплаты')
-    return fig
+
 
 def create_migration_vs_income_graph(filtered_df):
     fig = go.Figure()
@@ -19,11 +15,7 @@ def create_migration_vs_income_graph(filtered_df):
 
 
 
-def create_income_over_years_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['income'], mode='lines'))
-    fig.update_layout(title_text='Сумма дохода одного региона за несколько лет')
-    return fig
+
 
 def create_payment_over_years_graph(filtered_df):
     fig = go.Figure()
@@ -44,11 +36,7 @@ def create_page_1_layout(region, year):
 
     layout = html.Div([
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_population_vs_income_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
             dbc.Col(dcc.Graph(figure=create_migration_vs_income_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'})
-        ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_income_over_years_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'})
         ]),
         dbc.Row([
             dbc.Col(dcc.Graph(figure=create_payment_over_years_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
