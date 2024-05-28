@@ -2,6 +2,7 @@ import pandas as pd
 from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.express as px
 
 # Загрузка данных из файла
 file_path = '1.xlsx'
@@ -110,6 +111,10 @@ def update_page_1(region, year):
 def update_page_2(region, year):
     filtered_df = df[(df['region'] == region) & (df['year'] == year)]
     
+    # Переупорядочивание данных для тепловых карт
+    heatmap_data_population_growth = filtered_df.pivot(index='municipality', columns='year', values='population_growth')
+    heatmap_data_migration = filtered_df.pivot(index='municipality', columns='year', values='migration')
+    
     fig = make_subplots(rows=1, cols=2, subplot_titles=[
         'Тепловая карта с приростом населений',
         'Тепловая карта с привлекательности региона для миграции'
@@ -119,16 +124,18 @@ def update_page_2(region, year):
     
     # Тепловая карта с приростом населений
     fig.add_trace(go.Heatmap(
-        z=filtered_df['population_growth'],
-        x=filtered_df['municipality'],
-        y=filtered_df['year']
+        z=heatmap_data_population_growth.values,
+        x=heatmap_data_population_growth.columns,
+        y=heatmap_data_population_growth.index,
+        colorscale='Viridis'
     ), row=1, col=1)
     
     # Тепловая карта с привлекательности региона для миграции
     fig.add_trace(go.Heatmap(
-        z=filtered_df['migration'],
-        x=filtered_df['municipality'],
-        y=filtered_df['year']
+        z=heatmap_data_migration.values,
+        x=heatmap_data_migration.columns,
+        y=heatmap_data_migration.index,
+        colorscale='Viridis'
     ), row=1, col=2)
     
     fig.update_layout(height=600, width=1500, title_text="Дашборд - Страница 2", margin=dict(t=50, b=50, l=50, r=50))
