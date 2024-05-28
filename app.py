@@ -1,5 +1,6 @@
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -7,55 +8,10 @@ from plotly.subplots import make_subplots
 file_path = '1.xlsx'
 df = pd.read_excel(file_path)
 
-app = Dash(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Создание элементов дашборда
-app.layout = html.Div([
-    html.H1("Двухстраничный Дашборд"),
-    dcc.Tabs(id="tabs", value='tab-1', children=[
-        dcc.Tab(label='Страница 1', value='tab-1'),
-        dcc.Tab(label='Страница 2', value='tab-2'),
-    ]),
-    html.Div(id='tabs-content')
-])
-
-@app.callback(Output('tabs-content', 'children'),
-              Input('tabs', 'value'))
-def render_content(tab):
-    if tab == 'tab-1':
-        return html.Div([
-            dcc.Dropdown(
-                id='region-dropdown',
-                options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                value=df['region'].unique()[0]
-            ),
-            dcc.Dropdown(
-                id='year-dropdown',
-                options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                value=df['year'].unique()[0]
-            ),
-            dcc.Graph(id='page-1-graph')
-        ])
-    elif tab == 'tab-2':
-        return html.Div([
-            dcc.Dropdown(
-                id='region-dropdown-2',
-                options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                value=df['region'].unique()[0]
-            ),
-            dcc.Dropdown(
-                id='year-dropdown-2',
-                options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                value=df['year'].unique()[0]
-            ),
-            dcc.Graph(id='page-2-graph')
-        ])
-
-@app.callback(
-    Output('page-1-graph', 'figure'),
-    Input('region-dropdown', 'value'),
-    Input('year-dropdown', 'value'))
-def update_page_1(region, year):
+# Создание начальных графиков
+def create_page_1_fig(region, year):
     filtered_df = df[(df['region'] == region) & (df['year'] == year)]
     
     fig = make_subplots(rows=3, cols=2, subplot_titles=[
@@ -94,11 +50,7 @@ def update_page_1(region, year):
     fig.update_layout(height=900, width=1200, title_text="Дашборд - Страница 1")
     return fig
 
-@app.callback(
-    Output('page-2-graph', 'figure'),
-    Input('region-dropdown-2', 'value'),
-    Input('year-dropdown-2', 'value'))
-def update_page_2(region, year):
+def create_page_2_fig(region, year):
     filtered_df = df[(df['region'] == region) & (df['year'] == year)]
     
     fig = make_subplots(rows=1, cols=2, subplot_titles=[
@@ -124,6 +76,65 @@ def update_page_2(region, year):
     
     fig.update_layout(height=600, width=1200, title_text="Дашборд - Страница 2")
     return fig
+
+# Создание элементов дашборда
+app.layout = html.Div([
+    html.H1("Двухстраничный Дашборд"),
+    dcc.Tabs(id="tabs", value='tab-1', children=[
+        dcc.Tab(label='Страница 1', value='tab-1', children=[
+            dbc.Row([
+                dbc.Col([
+                    dcc.Dropdown(
+                        id='region-dropdown',
+                        options=[{'label': region, 'value': region} for region in df['region'].unique()],
+                        value=df['region'].unique()[0]
+                    ),
+                    dcc.Dropdown(
+                        id='year-dropdown',
+                        options=[{'label': year, 'value': year} for year in df['year'].unique()],
+                        value=df['year'].unique()[0]
+                    ),
+                ], width=3),
+                dbc.Col([
+                    dcc.Graph(id='page-1-graph', figure=create_page_1_fig(df['region'].unique()[0], df['year'].unique()[0]))
+                ], width=9),
+            ])
+        ]),
+        dcc.Tab(label='Страница 2', value='tab-2', children=[
+            dbc.Row([
+                dbc.Col([
+                    dcc.Dropdown(
+                        id='region-dropdown-2',
+                        options=[{'label': region, 'value': region} for region in df['region'].unique()],
+                        value=df['region'].unique()[0]
+                    ),
+                    dcc.Dropdown(
+                        id='year-dropdown-2',
+                        options=[{'label': year, 'value': year} for year in df['year'].unique()],
+                        value=df['year'].unique()[0]
+                    ),
+                ], width=3),
+                dbc.Col([
+                    dcc.Graph(id='page-2-graph', figure=create_page_2_fig(df['region'].unique()[0], df['year'].unique()[0]))
+                ], width=9),
+            ])
+        ]),
+    ]),
+])
+
+@app.callback(
+    Output('page-1-graph', 'figure'),
+    Input('region-dropdown', 'value'),
+    Input('year-dropdown', 'value'))
+def update_page_1(region, year):
+    return create_page_1_fig(region, year)
+
+@app.callback(
+    Output('page-2-graph', 'figure'),
+    Input('region-dropdown-2', 'value'),
+    Input('year-dropdown-2', 'value'))
+def update_page_2(region, year):
+    return create_page_2_fig(region, year)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
