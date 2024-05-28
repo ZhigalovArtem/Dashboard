@@ -1,124 +1,72 @@
-import pandas as pd
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
+import data as df
+from pages import page1, page2
 
-# Загрузка данных из файла
-file_path = '1.xlsx'
-df = pd.read_excel(file_path)
+external_stylesheets = [dbc.themes.JOURNAL]  # Выберите тему из https://bootswatch.com/
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.config.suppress_callback_exceptions = True
 
-# Функция для создания отдельных графиков
-def create_population_vs_income_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']))
-    fig.update_layout(title_text='Численность населения региона в зависимости от фонда зарплаты')
-    return fig
+# Задаем аргументы стиля для боковой панели
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#987156",
+}
 
-def create_migration_vs_income_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['municipality'], y=filtered_df['migration'], mode='lines'))
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']))
-    fig.update_layout(title_text='Миграционный прирост региона в зависимости от фонда зарплаты')
-    return fig
+# Справа от боковой панели размещается основной дашборд
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
 
-def create_budget_pie_chart(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income']))
-    fig.update_layout(title_text='Из чего состоит бюджет РФ сумма доходов региона')
-    return fig
+# Создание боковой панели
+sidebar = html.Div(
+    [
+        html.H2("Показатели стран мира", className="display-6"),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavLink("Страница 1", href="/page-1", active="exact"),
+                dbc.NavLink("Круговая", href="/page-2", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
 
-def create_income_over_years_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['income'], mode='lines'))
-    fig.update_layout(title_text='Сумма дохода одного региона за несколько лет')
-    return fig
+content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-def create_payment_over_years_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['payment'], mode='lines'))
-    fig.update_layout(title_text='Динамика фонда заработной платы в зависимости от одного региона')
-    return fig
-
-def create_income_vs_payment_graph(filtered_df):
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name='Income'))
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment'], name='Payment'))
-    fig.update_layout(title_text='Сумма доходов региона и сумма социальных выплат', barmode='group')
-    return fig
-
-# Основная функция для создания разметки с графиками
-def create_page_1_layout(region, year):
-    filtered_df = df[(df['region'] == region) & (df['year'] == year)]
-
-    layout = html.Div([
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_population_vs_income_graph(filtered_df)), width=6),
-            dbc.Col(dcc.Graph(figure=create_migration_vs_income_graph(filtered_df)), width=6)
-        ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_budget_pie_chart(filtered_df)), width=6),
-            dbc.Col(dcc.Graph(figure=create_income_over_years_graph(filtered_df)), width=6)
-        ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_payment_over_years_graph(filtered_df)), width=6),
-            dbc.Col(dcc.Graph(figure=create_income_vs_payment_graph(filtered_df)), width=6)
-        ])
-    ])
-    return layout
-
-# Создание элементов дашборда
-app.layout = html.Div([
-    html.H1("Двухстраничный Дашборд"),
-    dcc.Tabs(id="tabs", value='tab-1', children=[
-        dcc.Tab(label='Страница 1', value='tab-1', children=[
-            html.Div([
-                dcc.Dropdown(
-                    id='region-dropdown',
-                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                    value=df['region'].unique()[0]
-                ),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                    value=df['year'].unique()[0]
-                ),
-                html.Div(id='page-1-graph-container')
-            ])
-        ]),
-        dcc.Tab(label='Страница 2', value='tab-2', children=[
-            html.Div([
-                dcc.Dropdown(
-                    id='region-dropdown-2',
-                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                    value=df['region'].unique()[0]
-                ),
-                dcc.Dropdown(
-                    id='year-dropdown-2',
-                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                    value=df['year'].unique()[0]
-                ),
-                html.Div(id='page-2-graph-container')
-            ])
-        ]),
-    ]),
-])
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 @app.callback(
-    Output('page-1-graph-container', 'children'),
-    Input('region-dropdown', 'value'),
-    Input('year-dropdown', 'value'))
-def update_page_1(region, year):
-    return create_page_1_layout(region, year)
-
-@app.callback(
-    Output('page-2-graph-container', 'children'),
-    Input('region-dropdown-2', 'value'),
-    Input('year-dropdown-2', 'value'))
-def update_page_2(region, year):
-    # Эта часть кода остается без изменений, аналогично page-1, вы можете создать отдельные функции для графиков страницы 2
-    return html.Div([])  # Заглушка, доработайте аналогично page-1
+    Output("page-content", "children"),
+    [Input("url", "pathname")]
+)
+def render_page_content(pathname):
+    if pathname == "/":
+        return page1.layout
+    elif pathname == "/page-1":
+        return page1.layout
+    elif pathname == "/page-2":
+        return page2.layout
+    # Если пользователь попытается перейти на другую страницу, верните сообщение 404
+    return html.Div(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ],
+        className="p-3 bg-light rounded-3",
+    )
 
 if __name__ == '__main__':
     app.run_server(debug=True)
