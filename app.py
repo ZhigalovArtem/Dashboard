@@ -7,7 +7,7 @@ from plotly.subplots import make_subplots
 file_path = '1.xlsx'
 df = pd.read_excel(file_path)
 
-app = Dash(__name__)
+app = Dash(__name__, suppress_callback_exceptions=True)
 
 # Создание элементов дашборда
 app.layout = html.Div([
