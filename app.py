@@ -24,30 +24,38 @@ app.layout = html.Div([
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div([
-            dcc.Dropdown(
-                id='region-dropdown',
-                options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                value=df['region'].unique()[0]
-            ),
-            dcc.Dropdown(
-                id='year-dropdown',
-                options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                value=df['year'].unique()[0]
-            ),
+            html.Div([
+                dcc.Dropdown(
+                    id='region-dropdown',
+                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
+                    value=df['region'].unique()[0],
+                    style={'width': '48%', 'display': 'inline-block'}
+                ),
+                dcc.Dropdown(
+                    id='year-dropdown',
+                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
+                    value=df['year'].unique()[0],
+                    style={'width': '48%', 'display': 'inline-block'}
+                )
+            ], style={'padding': '10px'}),
             dcc.Graph(id='page-1-graph')
         ])
     elif tab == 'tab-2':
         return html.Div([
-            dcc.Dropdown(
-                id='region-dropdown-2',
-                options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                value=df['region'].unique()[0]
-            ),
-            dcc.Dropdown(
-                id='year-dropdown-2',
-                options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                value=df['year'].unique()[0]
-            ),
+            html.Div([
+                dcc.Dropdown(
+                    id='region-dropdown-2',
+                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
+                    value=df['region'].unique()[0],
+                    style={'width': '48%', 'display': 'inline-block'}
+                ),
+                dcc.Dropdown(
+                    id='year-dropdown-2',
+                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
+                    value=df['year'].unique()[0],
+                    style={'width': '48%', 'display': 'inline-block'}
+                )
+            ], style={'padding': '10px'}),
             dcc.Graph(id='page-2-graph')
         ])
 
@@ -69,7 +77,7 @@ def update_page_1(region, year):
         [{'type': 'xy'}, {'type': 'xy'}],
         [{'type': 'domain'}, {'type': 'xy'}],
         [{'type': 'xy'}, {'type': 'xy'}]
-    ])
+    ], vertical_spacing=0.3, horizontal_spacing=0.15)
     
     # Численность населения региона в зависимости от фонда зарплаты
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=1, col=1)
@@ -79,7 +87,8 @@ def update_page_1(region, year):
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=1, col=2)
     
     # Из чего состоит бюджет РФ сумма доходов региона
-    fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income']), row=2, col=1)
+    fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income'],
+                         domain=dict(x=[0, 1], y=[0, 1])), row=2, col=1)
     
     # Сумма дохода одного региона за несколько лет
     fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['income'], mode='lines'), row=2, col=2)
@@ -91,7 +100,7 @@ def update_page_1(region, year):
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=3, col=2)
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment']), row=3, col=2)
     
-    fig.update_layout(height=900, width=1200, title_text="Дашборд - Страница 1")
+    fig.update_layout(height=1200, width=1500, title_text="Дашборд - Страница 1", margin=dict(t=50, b=50, l=50, r=50))
     return fig
 
 @app.callback(
@@ -122,7 +131,7 @@ def update_page_2(region, year):
         y=filtered_df['year']
     ), row=1, col=2)
     
-    fig.update_layout(height=600, width=1200, title_text="Дашборд - Страница 2")
+    fig.update_layout(height=600, width=1500, title_text="Дашборд - Страница 2", margin=dict(t=50, b=50, l=50, r=50))
     return fig
 
 if __name__ == '__main__':
