@@ -13,13 +13,10 @@ def create_migration_vs_income_graph(filtered_df):
     fig.update_layout(title_text='Миграционный прирост региона в зависимости от фонда зарплаты')
     return fig
 
-
-
-
-
 def create_payment_over_years_graph(filtered_df):
+    grouped_df = filtered_df.groupby('year')['payment'].sum().reset_index()
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['payment'], mode='lines'))
+    fig.add_trace(go.Scatter(x=grouped_df['year'], y=grouped_df['payment'], mode='lines'))
     fig.update_layout(title_text='Динамика фонда заработной платы в зависимости от одного региона')
     return fig
 
@@ -36,11 +33,12 @@ def create_page_1_layout(region, year):
 
     layout = html.Div([
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_migration_vs_income_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'})
+            dbc.Col(dcc.Graph(figure=create_migration_vs_income_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
+            dbc.Col(dcc.Graph(figure=create_payment_over_years_graph(df[(df['region'] == region)])), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
         ]),
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=create_payment_over_years_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
-            dbc.Col(dcc.Graph(figure=create_income_vs_payment_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'})
+            
+            dbc.Col(dcc.Graph(figure=create_income_vs_payment_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px', 'width': '120vh'})
         ])
     ], style={'margin': '20px'})
     return layout

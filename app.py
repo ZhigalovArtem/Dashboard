@@ -29,7 +29,7 @@ CONTENT_STYLE = {
 # Создание боковой панели
 sidebar = html.Div(
     [
-        html.H2("Показатели стран мира", className="display-6"),
+        html.H2("Данные регионов России", className="display-6"),
         html.Hr(),
         dbc.Nav(
             [
