@@ -38,7 +38,7 @@ sidebar = html.Div(
         dbc.Nav(
             [
                 dbc.NavLink("Общая информация", href="/page-1", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
-                dbc.NavLink("Доход региона", href="/page-2", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
+                dbc.NavLink("Состав дохода региона", href="/page-2", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
                 dbc.NavLink("Численность населения и доход региона", href="/page-3", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
                 dbc.NavLink("Миграционная карта России", href="/page-4", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
             ],
