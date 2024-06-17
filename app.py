@@ -1,12 +1,16 @@
+
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 import data as df
 from pages import page1, page2, page3
 
+
 external_stylesheets = [dbc.themes.JOURNAL]  # Выберите тему из https://bootswatch.com/
+
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
+
 
 # Задаем аргументы стиля для боковой панели
 SIDEBAR_STYLE = {
@@ -70,6 +74,7 @@ def render_page_content(pathname):
         ],
         className="p-3 bg-light rounded-3",
     )
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
