@@ -10,21 +10,21 @@ def create_migration_vs_income_graph(filtered_df):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['migration'], name = 'Миграция'))
     #fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name = 'Доход'))
-    fig.update_layout(title_text='Миграционный прирост района')
+    fig.update_layout(title_text='Миграционный прирост районов', paper_bgcolor='#AF947F', plot_bgcolor='#AF947F')
     return fig
 
 def create_payment_over_years_graph(filtered_df):
     grouped_df = filtered_df.groupby('year')['payment'].sum().reset_index()
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=grouped_df['year'], y=grouped_df['payment'], mode='lines'))
-    fig.update_layout(title_text='Динамика фонда заработной платы региона')
+    fig.update_layout(title_text='Динамика фонда заработной платы региона', paper_bgcolor='#AF947F', plot_bgcolor='#AF947F')
     return fig
 
 def create_income_vs_payment_graph(filtered_df):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name='Доходы'))
     fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment'], name='Выплаты'))
-    fig.update_layout(title_text='Доход района и сумма социальных выплат', barmode='group')
+    fig.update_layout(title_text='Доход районов и сумма социальных выплат', barmode='group', paper_bgcolor='#AF947F', plot_bgcolor='#AF947F')
     return fig
 
 # Основная функция для создания разметки с графиками
@@ -35,7 +35,7 @@ def create_page_1_layout(region, year):
         dbc.Row([
             dbc.Col(dcc.Graph(figure=create_migration_vs_income_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
             dbc.Col(dcc.Graph(figure=create_payment_over_years_graph(df[(df['region'] == region)])), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px'}),
-        ]),
+        ], style={'margin-left': '0.5rem'}),
         dbc.Row([
             
             dbc.Col(dcc.Graph(figure=create_income_vs_payment_graph(filtered_df)), width=5, style={'border': 'solid 2px', 'border-radius': '20px', 'margin': '15px', 'width': '120vh'})
@@ -47,8 +47,9 @@ layout = dbc.Container([
     dbc.Row([
         dcc.Dropdown(
             options=[{'label': region, 'value': region} for region in df['region'].unique()],
-            value=df['region'].unique()[0],
-            id='region-dropdown'
+            value=df['region'].unique()[25],
+            id='region-dropdown',
+            style={'margin-bottom':'2px'}
         ),
         dcc.Dropdown(
             options=[{'label': year, 'value': year} for year in df['year'].unique()],

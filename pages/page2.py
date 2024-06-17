@@ -6,7 +6,7 @@ from data import df
 def create_budget_pie_chart(filtered_df):
     fig = go.Figure()
     fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income']))
-    fig.update_layout(title_text='Сумма дохода мунициапальных районов')
+    fig.update_layout(title_text='Состав дохода региона', paper_bgcolor='#AF947F', plot_bgcolor='#AF947F')
     return fig
 
 def pie_chart_layout(region, year):
@@ -15,7 +15,7 @@ def pie_chart_layout(region, year):
         dbc.Row([
             dbc.Col(dcc.Graph(figure=create_budget_pie_chart(filtered_df)), width=15, style={'border': 'solid 2px', 'border-radius': '20px'})
         ])
-    ], style={'margin': '15px', 'padding-top': '10%'})
+    ], style={'margin': '15px', 'padding-top': '10%', 'margin-bottom': '13.6rem'})
     return layout
 
 
@@ -24,7 +24,8 @@ layout = dbc.Container([
         dcc.Dropdown(
             options=[{'label': region, 'value': region} for region in df['region'].unique()],
             value=df['region'].unique()[0],
-            id='region-dropdown'
+            id='region-dropdown',
+            style={'margin-bottom':'2px'}
         ),
         dcc.Dropdown(
             options=[{'label': year, 'value': year} for year in df['year'].unique()],

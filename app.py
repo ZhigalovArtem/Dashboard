@@ -34,13 +34,13 @@ CONTENT_STYLE = {
 sidebar = html.Div(
     [
         html.H2("Данные регионов России", className="display-6"),
-        html.Hr(),
+        html.Hr(style={'border': 'solid 1px'}),
         dbc.Nav(
             [
-                dbc.NavLink("Общая информация", href="/page-1", active="exact"),
-                dbc.NavLink("Доходы региона", href="/page-2", active="exact"),
-                dbc.NavLink("Численность населения и доход региона", href="/page-3", active="exact"),
-                dbc.NavLink("Карта России", href="/page-4", active="exact"),
+                dbc.NavLink("Общая информация", href="/page-1", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
+                dbc.NavLink("Доход региона", href="/page-2", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
+                dbc.NavLink("Численность населения и доход региона", href="/page-3", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
+                dbc.NavLink("Миграционная карта России", href="/page-4", active="exact", style={'color':'black', 'border':'solid 1px', 'border-radius':'10px', 'margin':'2px'}),
             ],
             vertical=True,
             pills=True,
@@ -51,7 +51,7 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content],style={'background':'#AF947F'})
 
 @app.callback(
     Output("page-content", "children"),

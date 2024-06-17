@@ -4,20 +4,20 @@ import plotly.express as px
 
 from data import df, counties
 
-
+grouped_df = df.groupby(['cartodb_id', 'region'])['migration'].sum().reset_index()
 
 rusmap = px.choropleth_mapbox(
-                        df,
+                        grouped_df,
                         geojson=counties,
                         featureidkey='properties.cartodb_id',
                         color='migration', #решить какой показатель
                         locations='cartodb_id',
                         color_continuous_scale=[
                       [0, 'rgb(240,240,240)'],
-                      [0.005, 'rgb(55,61,48)'],
-                      [0.4, 'rgb(180,228,25)'],
-                      [1, 'rgb(227,26,28,0.5)']],
-                        range_color=(-40000,100000),
+                      [0.005, 'rgb(227,26,28,0.5)'],
+                      [0.7, 'rgb(180,228,25)'],
+                      [1, 'rgb(0,204,0)']],
+                        range_color=(-2300000,1500000),
                         mapbox_style="carto-positron",
                         zoom=20,
                         opacity=0.5,
@@ -34,8 +34,8 @@ layout = dbc.Container([
     dbc.Row ([
         dbc.Col(
                 html.Div([
-                html.H3("Карта регионов Российской федерации"),
-                html.Hr(style={'color': 'black'}),
+                html.H3("Миграция в регионах РФ"),
+                html.Hr(style={'color': 'black', 'border':'solid 1px'}),
             ], style={'textAlign': 'center'})
         )
     ]),
@@ -47,6 +47,6 @@ layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Graph(figure=rusmap)
-            ],width=12),
+            ],width=12, style={'border': 'solid 2px', 'border-radius': '20px', 'padding':'15px', 'margin-bottom': '16.8rem'}),
     ]),
 ])
