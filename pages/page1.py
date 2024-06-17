@@ -8,23 +8,23 @@ from data import df
 
 def create_migration_vs_income_graph(filtered_df):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=filtered_df['municipality'], y=filtered_df['migration'], mode='lines'))
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']))
-    fig.update_layout(title_text='Миграционный прирост региона в зависимости от фонда зарплаты')
+    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['migration'], name = 'Миграция'))
+    #fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name = 'Доход'))
+    fig.update_layout(title_text='Миграционный прирост района')
     return fig
 
 def create_payment_over_years_graph(filtered_df):
     grouped_df = filtered_df.groupby('year')['payment'].sum().reset_index()
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=grouped_df['year'], y=grouped_df['payment'], mode='lines'))
-    fig.update_layout(title_text='Динамика фонда заработной платы в зависимости от одного региона')
+    fig.update_layout(title_text='Динамика фонда заработной платы региона')
     return fig
 
 def create_income_vs_payment_graph(filtered_df):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name='Income'))
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment'], name='Payment'))
-    fig.update_layout(title_text='Сумма доходов региона и сумма социальных выплат', barmode='group')
+    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income'], name='Доходы'))
+    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment'], name='Выплаты'))
+    fig.update_layout(title_text='Доход района и сумма социальных выплат', barmode='group')
     return fig
 
 # Основная функция для создания разметки с графиками

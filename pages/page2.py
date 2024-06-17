@@ -6,7 +6,7 @@ from data import df
 def create_budget_pie_chart(filtered_df):
     fig = go.Figure()
     fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income']))
-    fig.update_layout(title_text='Из чего состоит бюджет РФ сумма доходов региона')
+    fig.update_layout(title_text='Сумма дохода мунициапальных районов')
     return fig
 
 def pie_chart_layout(region, year):
