@@ -1,7 +1,7 @@
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 import data as df
-from pages import page1, page2, page3
+from pages import page1, page2, page3, rusmap
 
 external_stylesheets = [dbc.themes.JOURNAL]  # Выберите тему из https://bootswatch.com/
 
@@ -36,6 +36,7 @@ sidebar = html.Div(
                 dbc.NavLink("Страница 1", href="/page-1", active="exact"),
                 dbc.NavLink("Круговая", href="/page-2", active="exact"),
                 dbc.NavLink("Численность населения и доход региона", href="/page-3", active="exact"),
+                dbc.NavLink("Карта России", href="/page-4", active="exact"),
             ],
             vertical=True,
             pills=True,
@@ -61,6 +62,8 @@ def render_page_content(pathname):
         return page2.layout
     elif pathname == "/page-3":
         return page3.layout
+    elif pathname == "/page-4":
+        return rusmap.layout
     # Если пользователь попытается перейти на другую страницу, верните сообщение 404
     return html.Div(
         [
