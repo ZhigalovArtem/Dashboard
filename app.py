@@ -1,145 +1,80 @@
-import pandas as pd
-from dash import Dash, dcc, html, Input, Output
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import plotly.express as px
 
-# Загрузка данных из файла
-file_path = '1.xlsx'
-df = pd.read_excel(file_path)
+from dash import Dash, dcc, html, Input, Output, callback
+import dash_bootstrap_components as dbc
+import data as df
+from pages import page1, page2, page3
 
-app = Dash(__name__, suppress_callback_exceptions=True)
 
-# Создание элементов дашборда
-app.layout = html.Div([
-    html.H1("Двухстраничный Дашборд"),
-    dcc.Tabs(id="tabs", value='tab-1', children=[
-        dcc.Tab(label='Страница 1', value='tab-1'),
-        dcc.Tab(label='Страница 2', value='tab-2'),
-    ]),
-    html.Div(id='tabs-content')
-])
+external_stylesheets = [dbc.themes.JOURNAL]  # Выберите тему из https://bootswatch.com/
 
-@app.callback(Output('tabs-content', 'children'),
-              Input('tabs', 'value'))
-def render_content(tab):
-    if tab == 'tab-1':
-        return html.Div([
-            html.Div([
-                dcc.Dropdown(
-                    id='region-dropdown',
-                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                    value=df['region'].unique()[0],
-                    style={'width': '48%', 'display': 'inline-block'}
-                ),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                    value=df['year'].unique()[0],
-                    style={'width': '48%', 'display': 'inline-block'}
-                )
-            ], style={'padding': '10px'}),
-            dcc.Graph(id='page-1-graph')
-        ])
-    elif tab == 'tab-2':
-        return html.Div([
-            html.Div([
-                dcc.Dropdown(
-                    id='region-dropdown-2',
-                    options=[{'label': region, 'value': region} for region in df['region'].unique()],
-                    value=df['region'].unique()[0],
-                    style={'width': '48%', 'display': 'inline-block'}
-                ),
-                dcc.Dropdown(
-                    id='year-dropdown-2',
-                    options=[{'label': year, 'value': year} for year in df['year'].unique()],
-                    value=df['year'].unique()[0],
-                    style={'width': '48%', 'display': 'inline-block'}
-                )
-            ], style={'padding': '10px'}),
-            dcc.Graph(id='page-2-graph')
-        ])
+
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.config.suppress_callback_exceptions = True
+
+
+# Задаем аргументы стиля для боковой панели
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#987156",
+}
+
+# Справа от боковой панели размещается основной дашборд
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
+
+# Создание боковой панели
+sidebar = html.Div(
+    [
+        html.H2("Данные регионов России", className="display-6"),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavLink("Общая информация", href="/page-1", active="exact"),
+                dbc.NavLink("Доходы региона", href="/page-2", active="exact"),
+                dbc.NavLink("Численность населения и доход региона", href="/page-3", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
+
+content = html.Div(id="page-content", style=CONTENT_STYLE)
+
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 @app.callback(
-    Output('page-1-graph', 'figure'),
-    Input('region-dropdown', 'value'),
-    Input('year-dropdown', 'value'))
-def update_page_1(region, year):
-    filtered_df = df[(df['region'] == region) & (df['year'] == year)]
-    
-    fig = make_subplots(rows=3, cols=2, subplot_titles=[
-        'Численность населения региона в зависимости от фонда зарплаты',
-        'Миграционный прирост региона в зависимости от фонда зарплаты',
-        'Из чего состоит бюджет РФ сумма доходов региона',
-        'Сумма дохода одного региона за несколько лет',
-        'Динамика фонда заработной платы в зависимости от одного региона',
-        'Сумма доходов региона и сумма социальных выплат'
-    ], specs=[
-        [{'type': 'xy'}, {'type': 'xy'}],
-        [{'type': 'domain'}, {'type': 'xy'}],
-        [{'type': 'xy'}, {'type': 'xy'}]
-    ], vertical_spacing=0.3, horizontal_spacing=0.15)
-    
-    # Численность населения региона в зависимости от фонда зарплаты
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=1, col=1)
-    
-    # Миграционный прирост региона в зависимости от фонда зарплаты
-    fig.add_trace(go.Scatter(x=filtered_df['municipality'], y=filtered_df['migration'], mode='lines'), row=1, col=2)
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=1, col=2)
-    
-    # Из чего состоит бюджет РФ сумма доходов региона
-    fig.add_trace(go.Pie(labels=filtered_df['municipality'], values=filtered_df['income'],
-                         domain=dict(x=[0, 1], y=[0, 1])), row=2, col=1)
-    
-    # Сумма дохода одного региона за несколько лет
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['income'], mode='lines'), row=2, col=2)
-    
-    # Динамика фонда заработной платы в зависимости от одного региона
-    fig.add_trace(go.Scatter(x=filtered_df['year'], y=filtered_df['payment'], mode='lines'), row=3, col=1)
-    
-    # Сумма доходов региона и сумма социальных выплат
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['income']), row=3, col=2)
-    fig.add_trace(go.Bar(x=filtered_df['municipality'], y=filtered_df['payment']), row=3, col=2)
-    
-    fig.update_layout(height=1200, width=1500, title_text="Дашборд - Страница 1", margin=dict(t=50, b=50, l=50, r=50))
-    return fig
+    Output("page-content", "children"),
+    [Input("url", "pathname")]
+)
+def render_page_content(pathname):
+    if pathname == "/":
+        return page1.layout
+    elif pathname == "/page-1":
+        return page1.layout
+    elif pathname == "/page-2":
+        return page2.layout
+    elif pathname == "/page-3":
+        return page3.layout
+    # Если пользователь попытается перейти на другую страницу, верните сообщение 404
+    return html.Div(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ],
+        className="p-3 bg-light rounded-3",
+    )
 
-@app.callback(
-    Output('page-2-graph', 'figure'),
-    Input('region-dropdown-2', 'value'),
-    Input('year-dropdown-2', 'value'))
-def update_page_2(region, year):
-    filtered_df = df[(df['region'] == region) & (df['year'] == year)]
-    
-    # Переупорядочивание данных для тепловых карт
-    heatmap_data_population_growth = filtered_df.pivot(index='municipality', columns='year', values='population_growth')
-    heatmap_data_migration = filtered_df.pivot(index='municipality', columns='year', values='migration')
-    
-    fig = make_subplots(rows=1, cols=2, subplot_titles=[
-        'Тепловая карта с приростом населений',
-        'Тепловая карта с привлекательности региона для миграции'
-    ], specs=[
-        [{'type': 'heatmap'}, {'type': 'heatmap'}]
-    ])
-    
-    # Тепловая карта с приростом населений
-    fig.add_trace(go.Heatmap(
-        z=heatmap_data_population_growth.values,
-        x=heatmap_data_population_growth.columns,
-        y=heatmap_data_population_growth.index,
-        colorscale='Viridis'
-    ), row=1, col=1)
-    
-    # Тепловая карта с привлекательности региона для миграции
-    fig.add_trace(go.Heatmap(
-        z=heatmap_data_migration.values,
-        x=heatmap_data_migration.columns,
-        y=heatmap_data_migration.index,
-        colorscale='Viridis'
-    ), row=1, col=2)
-    
-    fig.update_layout(height=600, width=1500, title_text="Дашборд - Страница 2", margin=dict(t=50, b=50, l=50, r=50))
-    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
