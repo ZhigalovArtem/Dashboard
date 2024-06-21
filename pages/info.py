@@ -27,4 +27,4 @@ layout = dbc.Container([
         html.P("Проект представлен в виде дашборда с разными диаграммами, которые отображают информацию по определенным показателям."),
         html.A("Ссылка на GitHub проекта", href = 'https://github.com/ZhigalovArtem/Dashboard', style = {'text-align':'center', 'color':'darkblue'}),
     ], style ={'font-size':'18px', 'background': '#B29D8D', 'border-radius':'10px', 'padding':'1rem 0.5rem 0.5rem 1rem'})
-], style = {'margin-bottom': '23.15rem'})
+], style = {'margin-bottom': '19.95rem'})
