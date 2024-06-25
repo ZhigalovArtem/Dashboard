@@ -15,6 +15,7 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 
 ```python3 -m venv venv```
 
+
 3. Активация виртуального окружения
 
 ```source venv/bin/activate```
