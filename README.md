@@ -19,6 +19,7 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 3. Активация виртуального окружения
 
 ```source venv/bin/activate```
+
 4.Установка openpyxl
 
 ```py -m pip install openpyxl```
