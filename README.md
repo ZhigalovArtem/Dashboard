@@ -20,7 +20,7 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 
 ```source venv/bin/activate```
 
-4.Установка openpyxl
+4. Установка openpyxl
 
 ```py -m pip install openpyxl```
 
