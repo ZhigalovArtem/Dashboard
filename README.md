@@ -18,8 +18,11 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 3. Активация виртуального окружения
 
 ```source venv/bin/activate```
+4.Установка openpyxl
 
-4. Установка библиотек
+```py -m pip install openpyxl```
+
+5. Установка библиотек
 
 ```pip3 install dash```
 
@@ -30,7 +33,7 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 ```pip install plotly-express```
 
 
-5. Запуск дашборда для его использования
+6. Запуск дашборда для его использования
 
 ```python3 app.py```
 
