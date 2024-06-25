@@ -52,7 +52,7 @@ layout = dbc.Container([
             style={'margin-bottom':'2px'}
         ),
         dcc.Dropdown(
-            options=[{'label': year, 'value': year} for year in df['year'].unique()],
+            options=[{'label': year, 'value': year} for year in df['year'].sort_values().unique()],
             value=df['year'].unique()[0],
             id='year-dropdown'
         )
