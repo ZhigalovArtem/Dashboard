@@ -32,7 +32,7 @@ https://github.com/ZhigalovArtem/Dashboard/blob/main/merged_data.xlsx
 
 5. Запуск дашборда для его использования
 
-```python3 app.py --help```
+```python3 app.py```
 
 <!--Зависимости-->
 ## Зависимости
